@@ -1,0 +1,18 @@
+# Ignore system files
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore notebooks checkpoints
+.ipynb_checkpoints/
+
+# Ignore models and outputs (can be uploaded separately if needed)
+models/
+outputs/
+
+# Ignore AWS credentials
+*.pem
+.aws/
+.env
