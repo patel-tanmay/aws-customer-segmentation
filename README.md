@@ -3,7 +3,7 @@
 This project segments retail customers based on Recency, Frequency, and Monetary (RFM) metrics using AWS SageMaker, Python, and FastAPI.
 
 ## 🧩 Tech Stack
-- **AWS Services:** S3, SageMaker, Glue (optional), ECR, IAM  
+- **AWS Services:** S3, SageMaker, Glue, ECR, IAM  
 - **Languages:** Python  
 - **Libraries:** pandas, scikit-learn, FastAPI  
 - **Deployment:** Docker + SageMaker Endpoint  
