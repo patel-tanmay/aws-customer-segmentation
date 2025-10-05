@@ -7,5 +7,3 @@ This project segments retail customers based on Recency, Frequency, and Monetary
 - **Languages:** Python  
 - **Libraries:** pandas, scikit-learn, FastAPI  
 - **Deployment:** Docker + SageMaker Endpoint  
-
-## 📂 Folder Structure
