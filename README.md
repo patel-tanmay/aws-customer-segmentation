@@ -163,5 +163,3 @@ rfm_project/
 
 This project was part of a continuous effort to bridge analytical insight with deployable machine learning.
 Special thanks to the AWS documentation and open-source community for guidance on SageMaker and Docker deployment workflows.
-
-ofessional and interview-ready.*
