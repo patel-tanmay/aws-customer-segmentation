@@ -1,196 +1,167 @@
-Retail Customer Segmentation with RFM Analysis (End-to-End on AWS)
+# 🛍️ Retail Customer Segmentation with RFM Analysis (End-to-End AWS + ML Deployment)
 
-This project builds an end-to-end customer segmentation pipeline using RFM (Recency, Frequency, Monetary) analysis, powered by Python, scikit-learn, and AWS SageMaker.
-It automates the entire process — from raw data ingestion to deploying a real-time inference API — helping businesses identify high-value, loyal, and at-risk customers for personalized marketing.
+## 📖 Introduction
 
-📊 1. Project Overview
+This project focuses on building an **end-to-end Retail Customer Segmentation pipeline** using the **RFM (Recency, Frequency, Monetary)** framework.
+The goal was to help the marketing team identify different customer segments — such as *Champions*, *Loyal Customers*, or *At-Risk* — to design better-targeted retention and engagement campaigns.
 
-Customer segmentation is essential for data-driven marketing.
-This project demonstrates how to:
+Unlike a typical offline notebook project, this one goes beyond analytics — the trained model was **containerized using Docker**, pushed to **Amazon ECR**, and **deployed as a real-time inference endpoint on Amazon SageMaker**, making the insights **production-ready**.
 
-Clean and preprocess 500K+ retail transactions
+---
 
-Derive RFM features for each customer
+## 💼 Business Problem
 
-Apply K-Means clustering to segment customers
+E-commerce platforms often deal with a vast number of customers but lack visibility into **who their most valuable customers are**.
+The marketing spend was being distributed uniformly across all users, leading to inefficient ROI.
 
-Deploy the trained model via a Dockerized Flask API on AWS SageMaker
+**Objective:**
 
-Enable real-time scoring for new customers using /invocations endpoint
+* Identify key customer segments based on behavioral and spending patterns.
+* Enable data-driven marketing strategies that increase retention and revenue efficiency.
 
-🧩 2. Architecture
-        ┌─────────────────────────────┐
-        │       Raw Data (S3)         │
-        └────────────┬────────────────┘
-                     │
-                     ▼
-        ┌─────────────────────────────┐
-        │ Data Cleaning & RFM Feature │
-        │ Engineering (Python, Pandas)│
-        └────────────┬────────────────┘
-                     │
-                     ▼
-        ┌─────────────────────────────┐
-        │ K-Means Model Training      │
-        │ (scikit-learn, joblib)      │
-        └────────────┬────────────────┘
-                     │
-                     ▼
-        ┌─────────────────────────────┐
-        │  Model Serialization (.pkl) │
-        │  + Scaler Save              │
-        └────────────┬────────────────┘
-                     │
-                     ▼
-        ┌─────────────────────────────┐
-        │ Dockerized Flask API        │
-        │ (inference.py + Dockerfile) │
-        └────────────┬────────────────┘
-                     │
-                     ▼
-        ┌─────────────────────────────┐
-        │ AWS ECR → SageMaker Endpoint│
-        │ Real-time Predictions (POST)│
-        └─────────────────────────────┘
+---
 
-🧠 3. Key Features
+## 📊 Dataset
 
-✅ Data Engineering:
+* **Source:** Public e-commerce retail dataset (~500K transactions).
+* **Fields:** `CustomerID`, `InvoiceDate`, `Quantity`, `UnitPrice`, `Country`.
+* **Derived Metrics:**
 
-Processed 500K+ e-commerce transactions stored in AWS S3.
+  * **Recency:** Days since the last purchase.
+  * **Frequency:** Number of purchases made.
+  * **Monetary:** Total revenue generated.
 
-Engineered RFM features using pandas & numpy.
+Data was uploaded to **Amazon S3**, cleaned and transformed using **AWS Glue and Python (pandas)**, and later queried using **AWS Athena** for validation.
 
-✅ Modeling:
+---
 
-Used K-Means clustering with optimal k determined via the elbow method.
+## ⚙️ Methodology
 
-Scaled data using StandardScaler for consistent clustering.
+1. **Data Preparation (ETL on AWS)**
 
-Persisted models with joblib for reproducibility.
+   * Stored raw CSV files in **S3** and connected through **AWS Glue** for schema inference and cleaning.
+   * Used **pandas** for feature engineering to compute RFM metrics.
 
-✅ Deployment:
+2. **Feature Scaling & Transformation**
 
-Created an inference API using Flask.
+   * Log-transformed skewed variables (Recency, Frequency, Monetary).
+   * Standardized features using `StandardScaler()` to prepare for clustering.
 
-Containerized with Docker and pushed to AWS ECR.
+3. **Modeling (K-Means Clustering)**
 
-Deployed on AWS SageMaker as a real-time inference endpoint.
+   * Used **Elbow Method** and **Silhouette Score** to determine optimal clusters.
+   * Trained a **K-Means model** to segment customers into interpretable groups:
 
-✅ Business Insight:
+     * *Champions*
+     * *Loyal Customers*
+     * *At-Risk Customers*
+     * *Hibernating Customers*
 
-Found top 20% of customers contributing ~60% of total revenue.
+4. **Model Saving & Deployment**
 
-Enabled marketing teams to target loyal & at-risk customer groups efficiently.
+   * Serialized the trained model (`kmeans_model.pkl`) and scaler (`scaler.pkl`) using **joblib**.
+   * Built a **Flask-based inference API** (`inference.py`) to handle real-time predictions.
+   * Created a **Docker image** with all dependencies and pushed it to **Amazon ECR**.
+   * Deployed the containerized model as a **real-time SageMaker Endpoint**, making it accessible via REST API.
 
-⚙️ 4. Tech Stack
-Category	Tools / Services
-Languages	Python (3.9)
-Libraries	pandas, numpy, scikit-learn, joblib, flask, gunicorn
-Cloud Services	AWS S3, AWS ECR, AWS SageMaker
-Containerization	Docker
-Orchestration	SageMaker Studio
-Version Control	Git + GitHub
-📁 5. Project Structure
+---
+
+## 🧰 Tech Stack
+
+| Category                | Tools / Services                       |
+| ----------------------- | -------------------------------------- |
+| Data Storage            | Amazon S3                              |
+| Data Cleaning & ETL     | AWS Glue, pandas                       |
+| Modeling                | scikit-learn (K-Means, StandardScaler) |
+| Model Serialization     | joblib                                 |
+| API Framework           | Flask                                  |
+| Containerization        | Docker                                 |
+| Cloud Deployment        | Amazon SageMaker, ECR                  |
+| Orchestration / Scripts | Python                                 |
+| Visualization           | matplotlib, seaborn                    |
+
+---
+
+## 🚀 Results
+
+* Created **4 key customer segments** that revealed strong revenue concentration —
+  the **top 20% of customers generated nearly 60% of total revenue**.
+* Delivered an **API-ready segmentation service**, deployable directly in production via SageMaker.
+* Enabled potential marketing automation for high-value customer targeting and churn prevention.
+
+Example API Input:
+
+```json
+{
+  "recency": 15,
+  "frequency": 12,
+  "monetary": 540
+}
+```
+
+Example API Output:
+
+```json
+{
+  "cluster": 1,
+  "input_data": {
+    "recency": 15,
+    "frequency": 12,
+    "monetary": 540
+  }
+}
+```
+
+---
+
+## 🧩 Project Structure
+
+```
 rfm_project/
 │
-├── data/
-│   └── retail_dataset.csv
-│
-├── models/
-│   ├── kmeans_model.pkl
-│   └── scaler.pkl
-│
-├── notebooks/
-│   └── rfm_analysis.ipynb
-│
 ├── api/
-│   └── app/
-│       └── main.py            # FastAPI local testing API
+│   ├── app/
+│   │   └── main.py                # FastAPI-based local testing API
+│   ├── requirements.txt
 │
 ├── docker_inference/
-│   ├── inference.py           # Flask inference logic
-│   ├── Dockerfile             # Container setup
-│   ├── requirements.txt       # Dependencies
+│   ├── Dockerfile                 # For containerization and SageMaker deployment
+│   ├── inference.py               # Flask inference API
+│   ├── models/                    # Contains trained model & scaler
+│   └── requirements.txt
+│
+├── notebooks/
+│   └── rfm_analysis.ipynb         # Core analysis & feature engineering
+│
+├── outputs/
+│   └── rfm_segments.csv           # Final cluster results
 │
 └── scripts/
-    └── utils.py               # Helper functions
+    └── utils.py                   # Helper functions
+```
 
-🚀 6. Steps to Reproduce
-🧹 Step 1: Data Preparation
-# Load and preprocess dataset
-python notebooks/rfm_analysis.ipynb
+---
 
+## 📈 Visual Insights
 
-Generates:
+* Revenue vs. Cluster Size visualization showed a clear 80/20 pattern.
+* RFM heatmaps helped validate cluster separation and customer behavior distribution.
+* Segment-wise retention rates suggested strong opportunity in **cross-selling** and **loyalty campaigns**.
 
-rfm_segments.csv in /outputs
+---
 
-Saved models in /models
+## 🧠 Key Learnings
 
-🧠 Step 2: Train and Save Models
-joblib.dump(kmeans_model, "models/kmeans_model.pkl")
-joblib.dump(scaler, "models/scaler.pkl")
+* Understood how to **move from offline ML to deployable ML services** using AWS infrastructure.
+* Learned the complete flow of **building, containerizing, and hosting** a machine learning model in SageMaker.
+* Improved awareness of **IAM roles, ECR permissions**, and **endpoint troubleshooting** in production.
+* Strengthened understanding of **data-to-decision pipelines** — from business framing to actionable insight.
 
-🐳 Step 3: Build Docker Image
-cd docker_inference
-docker build -t rfm-segmentation .
+---
 
-☁️ Step 4: Push to AWS ECR
-aws ecr create-repository --repository-name rfm-segmentation
-aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin <account_id>.dkr.ecr.us-east-2.amazonaws.com
-docker tag rfm-segmentation:latest <account_id>.dkr.ecr.us-east-2.amazonaws.com/rfm-segmentation:latest
-docker push <account_id>.dkr.ecr.us-east-2.amazonaws.com/rfm-segmentation:latest
+## 🤝 Acknowledgements
 
-🧩 Step 5: Deploy on SageMaker
-import sagemaker
-from sagemaker.model import Model
+This project was part of a continuous effort to bridge analytical insight with deployable machine learning.
+Special thanks to the AWS documentation and open-source community for guidance on SageMaker and Docker deployment workflows.
 
-model = Model(
-    image_uri="<account_id>.dkr.ecr.us-east-2.amazonaws.com/rfm-segmentation:latest",
-    role="<sagemaker_execution_role>"
-)
-predictor = model.deploy(initial_instance_count=1, instance_type="ml.m5.large")
-
-🌐 Step 6: Test the Endpoint
-import requests
-response = requests.post(
-    "https://<endpoint-url>/invocations",
-    json={"recency": 5, "frequency": 12, "monetary": 400}
-)
-print(response.json())
-
-
-Expected Output:
-
-{
-  "cluster": 2,
-  "input_data": {"recency": 5, "frequency": 12, "monetary": 400}
-}
-
-📈 7. Results & Insights
-
-3 key customer clusters identified:
-
-Cluster 0: High-value loyal customers
-
-Cluster 1: New/Occasional buyers
-
-Cluster 2: At-risk or churned users
-
-The top 20% customers drove ~60% revenue contribution.
-
-Helped prioritize personalized campaigns and retention strategies.
-
-🧱 8. Next Improvements
-
-Integrate AWS Lambda for serverless batch scoring
-
-Store predictions in AWS RDS or DynamoDB
-
-Build a Power BI dashboard for segment visualization
-
-🧑‍💻 Author
-
-Tanmay Patel
-Data Scientist | AWS + Python + Machine Learning
+ofessional and interview-ready.*
