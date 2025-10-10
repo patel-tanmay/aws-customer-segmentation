@@ -1,4 +1,4 @@
-# 🛍️ Retail Customer Segmentation with RFM Analysis (End-to-End AWS + ML Deployment)
+# Retail Customer Segmentation with RFM Analysis (End-to-End AWS + ML Deployment)
 
 ## 📖 Introduction
 
